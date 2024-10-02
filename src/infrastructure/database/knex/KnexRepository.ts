@@ -9,8 +9,8 @@ export class KnexStoreRepository implements StoreRepository {
     return rows.map((row) => ({
       id: row.id,
       name: row.name,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     }));
   }
 
@@ -24,33 +24,39 @@ export class KnexStoreRepository implements StoreRepository {
     return {
       id: row.id,
       name: row.name,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
     };
   }
 
   async create(store: Store): Promise<Store> {
-    const [id] = await db("stores").insert({
-      name: store.name,
-    });
+    const result: Store[] = await db("stores")
+      .returning(["id", "name", "created_at", "updated_at"])
+      .insert({
+        name: store.name,
+      });
 
     return {
-      id,
-      name: store.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      id: result[0].id,
+      name: result[0].name,
+      created_at: result[0].created_at,
+      updated_at: result[0].updated_at,
     };
   }
 
-  async update(store: Store): Promise<Store> {
-    await db("stores").where({ id: store.id }).update({
-      name: store.name,
-      updated_at: new Date(),
-    });
+  async update(id: number, store: Partial<Store>): Promise<Store> {
+    const result: Store[] = await db("stores")
+      .where({ id })
+      .returning(["id", "name", "created_at", "updated_at"])
+      .update({
+        ...store,
+      });
 
     return {
-      ...store,
-      updatedAt: new Date(),
+      id: result[0].id,
+      name: result[0].name,
+      created_at: result[0].created_at,
+      updated_at: result[0].updated_at,
     };
   }
 
