@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc -p .",
+    "start": "node dist/src/server.js",
     "migration:create": "knex migrate:make create_stores_table --knexfile src/infrastructure/database/knex/knex.config.ts",
     "migration:latest": "knex migrate:latest --knexfile src/infrastructure/database/knex/knex.config.ts",
     "seed:create": "knex seed:make stores --knexfile src/infrastructure/database/knex/knex.config.ts",
